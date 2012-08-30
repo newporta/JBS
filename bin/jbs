@@ -1,0 +1,6 @@
+#! /usr/bin/env ruby
+$LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
+
+require 'jbs'
+
+Jbs.just_build_stuff Jbs::Repo.new(Jbs::Jobs::JOBS)
