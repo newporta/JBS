@@ -1,5 +1,6 @@
 $LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + "/../../lib")
 
+require "rubygems"
 require "minitest/autorun"
 require "jbs/repo"
 
@@ -20,27 +21,6 @@ describe Jbs::Repo do
     end
   end
 
-  describe "queue_jobs" do
-    before :each do
-      @queue = []
-    end
-
-    it "queues jobs when the sha has changed" do
-      @queue.size.must_equal 0
-      @repo.queue_jobs @queue
-      @queue.size.must_equal 1
-    end
-
-    it "doesn't queue jobs when there's no change" do
-      @current_sha = `git rev-parse master`
-      @queue.size.must_equal 0
-      @jobs[0][:sha] = @current_sha
-      @repo.queue_jobs @queue
-
-      @queue.size.must_equal 0
-    end
-  end
-
   describe 'poll' do
     it "polls git" do
       @repo.poll
@@ -53,4 +33,14 @@ describe Jbs::Repo do
     end
   end
 
+  describe 'sha_for' do
+    it "returns the current sha" do
+      @current_sha = `git rev-parse master`
+      @repo.sha_for('master').must_equal @current_sha
+    end
+
+    it "returns nil for non existant branches" do
+      @repo.sha_for('lemons').must_equal nil
+    end
+  end
 end

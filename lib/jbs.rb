@@ -1,7 +1,12 @@
 require "jbs/version"
-require "jbs/jbs"
+require "jbs/master"
 require "jbs/repo"
-require "jbs/jobs"
+require "jbs/job"
 
 module Jbs
+  class << self
+    def just_build_stuff(repo)
+      Master.new(repo).run
+    end
+  end
 end
