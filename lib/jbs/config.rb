@@ -8,7 +8,7 @@ module Jbs
       @configuration = {}
 
       OptionParser.new(argv) do |opts|
-        opts.banner = "Usage: jbi [options] [spec_filename [...]]"
+        opts.banner = "Usage: jbs [options] [spec_filename [...]]"
 
         opts.on("-c", "--cpus NUMBER", Integer, "Specify the number of CPUs to use on the host, or if specified after a --slave, on the slave") do |n|
           configuration.set_process_count n

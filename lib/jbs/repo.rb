@@ -1,27 +1,30 @@
+require "jbs/util/in_directory"
 module Jbs
   class Repo
-    def initialize(jobs)
-      @jobs = jobs
-      @next_poll = Time.now
+    include Jbs::Util::InDirectory
+
+    attr_accessor :dirname
+    def initialize(dirname)
+      self.dirname = dirname
     end
 
     def poll
-      `git fetch`
+      in_directory(dirname) do
+        `#{git_fetch_command}`
+      end
       raise "Oh Noes - couldn't FETCH!" if $? != 0
-      increment_timer
-    end
-
-    def poll_now?
-      @next_poll < Time.now
-    end
-
-    def increment_timer
-      @next_poll = Time.now + 60
     end
 
     def sha_for branch
-      result = `git rev-parse #{branch} 2>&1`
-      result =~ /fatal/ ? nil : result
+      in_directory(dirname) do
+        result = `git rev-parse #{branch} 2>&1`
+        result =~ /fatal/ ? nil : result.strip
+      end
+    end
+
+    private
+    def git_fetch_command
+      "git fetch"
     end
   end
 end

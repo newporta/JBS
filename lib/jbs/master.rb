@@ -1,45 +1,47 @@
 class Jbs::Master
-  trap('INT'){ $interrupted = true }
+  trap('INT') { $interrupted = true }
 
-  attr_reader :repo, :queue, :jobs
+  attr_accessor :repos, :polling_strategy, :jobs
 
-  def initialize(repo, jobs)
-    @queue = []
-    @repo = repo
-    @jobs = jobs
+  def initialize(jobs, repos, polling_strategy)
+    self.jobs = jobs
+    self.repos = repos
+    self.polling_strategy = polling_strategy
   end
 
   def run
     loop do
       break if $interrupted
-      run_job || poll_repo || sleep(10)
+      run_jobs || poll || sleep(20)
     end
+  end
+
+  def run_jobs
+    jobs.pending? ? run_next_job : false
+  end
+
+  def poll
+    polling_strategy.poll_now? ? poll_and_update : false
   end
 
   private
 
-  def run_job
-    if job = queue.shift
-      job.run
-      true
-    else
-      false
-    end
+  def run_next_job
+    jobs.run_next
+    true
   end
 
-  def poll_repo
-    if repo.poll_now?
-      repo.poll
-      queue_jobs
-      true
-    else
-      false
-    end
+  def poll_and_update
+    poll_repos
+    update_jobs
+    true
   end
 
-  def queue_jobs
-    jobs.each do |job|
-      queue << job unless job.built
-    end
+  def poll_repos
+    repos.map(&:poll)
+  end
+
+  def update_jobs
+    jobs.update
   end
 end

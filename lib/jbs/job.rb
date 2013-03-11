@@ -1,33 +1,32 @@
 module Jbs
   class Job
-    attr_accessor :branch, :sha, :task, :status, :output, :built
+    attr_accessor :repo, :branch, :sha, :task, :status, :output, :built
 
-    def initialize(branch, task)
-      @branch = branch
-      @task = task
+    def initialize(opts)
+      self.repo = opts.fetch(:repo)
+      self.branch = opts.fetch(:branch)
+      self.task = opts.fetch(:task)
+      self.sha = opts.fetch(:sha, nil)
+      self.built = false
     end
 
-    def run
-      puts "Running #{branch} #{task}!"
+    def sync_with_repo
+      old_sha = sha
+      self.sha = repo.sha_for(branch)
+      self.built = old_sha == sha
+    end
 
-      pipe = IO.popen("git checkout #{branch} && git reset head --hard && bundle exec rake #{task} 2>&1")
-      output = pipe.read
-      Process.wait pipe.pid
+    def pending?
+      !built
+    end
 
-      self.status = $?
+    def update(status, output)
+      self.status = status
       self.output = output
-      self.built = true
-
-      puts "Result: #{status}"
-      puts "#{output}"
     end
 
-    def update(repo)
-      new_sha = repo.sha_for branch
-      if new_sha != sha
-        self.sha = new_sha
-        self.built = false
-      end
+    def new_run
+      JobRun.new(self)
     end
   end
 end

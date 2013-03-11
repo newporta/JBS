@@ -14,4 +14,6 @@ Gem::Specification.new do |gem|
   gem.name          = "jbs"
   gem.require_paths = ["lib"]
   gem.version       = Jbs::VERSION
+
+  gem.add_dependency('rspec')
 end
