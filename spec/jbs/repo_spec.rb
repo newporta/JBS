@@ -1,5 +1,5 @@
 require "jbs/repo"
-require "rspec"
+require_relative "../spec_helper"
 
 # We're stubbing git here, it's api is pretty stable so we can _probably_ rely on it.
 

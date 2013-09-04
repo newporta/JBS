@@ -1,5 +1,5 @@
 require "jbs/polling_strategies/naive"
-require "rspec"
+require_relative "../../spec_helper"
 
 describe Jbs::PollingStrategies::Naive do
   subject{Jbs::PollingStrategies::Naive.new}

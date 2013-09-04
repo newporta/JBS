@@ -1,5 +1,5 @@
 require "jbs/job_run"
-require "rspec"
+require_relative "../spec_helper"
 
 describe Jbs::JobRun do
   let(:repo) { double('repo') }

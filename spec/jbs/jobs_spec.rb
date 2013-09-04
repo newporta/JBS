@@ -1,5 +1,5 @@
 require "jbs/jobs"
-require "rspec"
+require_relative "../spec_helper"
 
 describe Jbs::Jobs do
 

@@ -1,5 +1,5 @@
 require "jbs/util/in_directory"
-require "rspec"
+require_relative "../../spec_helper"
 
 class Dummy
 end

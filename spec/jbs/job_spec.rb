@@ -1,5 +1,5 @@
 require "jbs/job"
-require "rspec"
+require_relative "../spec_helper"
 
 describe Jbs::Job do
 
@@ -42,5 +42,13 @@ describe Jbs::Job do
     subject { job.new_run }
     its(:sha) { should eq('some-sha') }
     its(:job) { should eq(job) }
+  end
+
+  describe "#update" do
+    before do
+      job.update(1, 'Lemons')
+    end
+    its(:status){ should eq(1) }
+    its(:output){ should eq('Lemons') }
   end
 end
