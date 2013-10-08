@@ -1,5 +1,12 @@
 source 'https://rubygems.org'
 
-gem 'simplecov', :require => false, :group => :test
+group :development do
+  gem 'guard'
+  gem 'guard-rspec'
+  gem 'simplecov', :require => false
+  gem 'pry'
+  gem 'pry-byebug'
+  gem 'rake'
+end
 
 gemspec

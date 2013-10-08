@@ -3,15 +3,15 @@ require_relative "../spec_helper"
 
 describe Jbs::Jobs do
 
-  let(:job) { Jbs::Job.new(:repo => repo, :branch => '', :task => '') }
   let(:repo) { double("repo") }
+  let(:job) { Jbs::Job.new(:repo => repo, :branch => '', :task => '') }
   before { repo.stub(:sha_for) }
 
   subject(:jobs) { Jbs::Jobs.new }
   its(:jobs) { should be_empty }
   its(:queue) { should be_empty }
 
-  describe "add" do
+  describe "#add" do
     before { jobs.add(job) }
     its(:jobs) { should_not be_empty }
   end

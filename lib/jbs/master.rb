@@ -10,8 +10,7 @@ class Jbs::Master
   end
 
   def run
-    loop do
-      break if $interrupted
+    while running? do
       run_jobs || poll || sleep(20)
     end
   end
@@ -22,6 +21,10 @@ class Jbs::Master
 
   def poll
     polling_strategy.poll_now? ? poll_and_update : false
+  end
+
+  def running?
+    true unless $interrupted
   end
 
   private

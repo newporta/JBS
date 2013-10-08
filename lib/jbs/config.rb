@@ -2,65 +2,39 @@ require 'optparse'
 
 module Jbs
   class Config
-    attr_reader :configuration
+    attr_accessor :jobs, :repos
 
-    def initialize(argv)
-      @configuration = {}
+    def initialize
+      self.jobs = []
+      self.repos = []
+    end
 
-      OptionParser.new(argv) do |opts|
-        opts.banner = "Usage: jbs [options] [spec_filename [...]]"
+    def self.parse(args)
+      config = new
 
-        opts.on("-c", "--cpus NUMBER", Integer, "Specify the number of CPUs to use on the host, or if specified after a --slave, on the slave") do |n|
-          configuration.set_process_count n
-        end
+      parser = OptionParser.new do |opts|
+        opts.banner = "Usage: jbs [options]"
 
-        opts.on("-e", "--environment STRING", String, "The Rails environment to use, defaults to 'nitra'") do |environment|
-          configuration.environment = environment
-        end
-
-        opts.on("--load", "Load schema into database before running specs") do
-          configuration.load_schema = true
-        end
-
-        opts.on("--migrate", "Migrate database before running specs") do
-          configuration.migrate = true
-        end
-
-        opts.on("-q", "--quiet", "Quiet; don't display progress bar") do
-          configuration.quiet = true
-        end
-
-        opts.on("-p", "--print-failures", "Print failures immediately when they occur") do
-          configuration.print_failures = true
-        end
-
-        opts.on("--slave CONNECTION_COMMAND", String, "Provide a command that executes \"nitra --slave-mode\" on another host") do |connection_command|
-          configuration.slaves << {:command => connection_command, :cpus => nil}
-        end
-
-        opts.on("--slave-mode", "Run in slave mode; ignores all other command-line options") do
-          configuration.slave_mode = true
-        end
-
-        opts.on("--debug", "Print debug output") do
-          configuration.debug = true
-        end
-
-        opts.on("--cucumber", "Add full cucumber run, causes any files you list manually to be ignored") do
-          configuration.frameworks << "cucumber"
-        end
-
-        opts.on("--rspec", "Add full rspec run, causes any files you list manually to be ignored") do
-          configuration.frameworks << "rspec"
+        opts.on("-j", "--job JOBSTRING1,JOBSTRING2", Array, "Specify the repo directory, branch name and rake tasks to run", "JOBSTRING format = repo:branch:task") do |jobstrings|
+          jobstrings.each do |jobstring|
+            repo_dirname, branch, task = jobstring.split(':')
+            unless repo = config.repos.find{|r| r.dirname == repo_dirname }
+              repo = Jbs::Repo.new(repo_dirname)
+              config.repos << repo
+            end
+            config.jobs << Job.new(repo: repo, branch: branch, task: task)
+          end
         end
 
         opts.on_tail("-h", "--help", "Show this message") do
           puts opts
           exit
         end
-      end.parse!
+      end
 
-      configuration.framework = configuration.frameworks.first
+      parser.parse!(args)
+
+      config
     end
   end
 end
