@@ -5,11 +5,7 @@ require "jbs/jobs"
 require "jbs/job"
 require "jbs/job_run"
 require "jbs/polling_strategies/naive"
+require "jbs/config"
 
 module Jbs
-  class << self
-    def just_build_stuff(jobs, repo, polling_strategy)
-      Master.new(jobs, repo, polling_strategy).run
-    end
-  end
 end

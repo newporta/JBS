@@ -1,4 +1,5 @@
 require "jbs/job_run"
+require "jbs/job"
 require_relative "../spec_helper"
 
 describe Jbs::JobRun do

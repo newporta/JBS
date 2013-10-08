@@ -1,5 +1,3 @@
-require "jbs/job_run"
-
 module Jbs
   class Jobs
     attr_accessor :jobs, :queue
@@ -15,6 +13,10 @@ module Jbs
     def update
       jobs.map(&:sync_with_repo)
       refresh_queue
+    end
+
+    def repos
+      jobs.collect(&:repo).uniq
     end
 
     def run_next

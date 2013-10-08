@@ -3,9 +3,9 @@ class Jbs::Master
 
   attr_accessor :repos, :polling_strategy, :jobs
 
-  def initialize(jobs, repos, polling_strategy)
+  def initialize(jobs, polling_strategy)
     self.jobs = jobs
-    self.repos = repos
+    self.repos = jobs.repos
     self.polling_strategy = polling_strategy
   end
 

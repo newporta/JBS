@@ -1,13 +1,4 @@
 #! /usr/bin/env ruby
-$LOAD_PATH.unshift File.expand_path(File.dirname(__FILE__) + '/../lib')
-
 require 'jbs'
-
-polling_strategy = Jbs::PollingStrategies::Naive.new
-repo = Jbs::Repo.new('.')
-job = Jbs::Job.new(:repo => repo, :branch => 'master', :task => '')
-jobs = Jbs::Jobs.new
-jobs.add(job)
-
-
-Jbs.just_build_stuff(jobs, [repo], polling_strategy)
+config = Jbs::Config.parse(ARGV)
+Jbs::Master.new(config.jobs, Jbs::PollingStrategies::Naive.new).run

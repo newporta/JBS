@@ -2,11 +2,10 @@ require 'optparse'
 
 module Jbs
   class Config
-    attr_accessor :jobs, :repos
+    attr_accessor :jobs
 
     def initialize
-      self.jobs = []
-      self.repos = []
+      self.jobs = Jbs::Jobs.new
     end
 
     def self.parse(args)
@@ -18,11 +17,10 @@ module Jbs
         opts.on("-j", "--job JOBSTRING1,JOBSTRING2", Array, "Specify the repo directory, branch name and rake tasks to run", "JOBSTRING format = repo:branch:task") do |jobstrings|
           jobstrings.each do |jobstring|
             repo_dirname, branch, task = jobstring.split(':')
-            unless repo = config.repos.find{|r| r.dirname == repo_dirname }
+            unless repo = config.jobs.repos.find{|r| r.dirname == repo_dirname }
               repo = Jbs::Repo.new(repo_dirname)
-              config.repos << repo
             end
-            config.jobs << Job.new(repo: repo, branch: branch, task: task)
+            config.jobs.add Job.new(repo: repo, branch: branch, task: task)
           end
         end
 

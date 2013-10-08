@@ -1,4 +1,5 @@
 require "jbs/master"
+require "jbs/jobs"
 require_relative "../spec_helper"
 
 describe Jbs::Master do
@@ -6,9 +7,12 @@ describe Jbs::Master do
   let(:jobs) { Jbs::Jobs.new }
   let(:polling_strategy) { double("strategy") }
 
-  before { repo.stub(:sha_for) }
+  before do
+    repo.stub(:sha_for)
+    jobs.stub(:repos).and_return([repo])
+  end
 
-  let(:master){ Jbs::Master.new(jobs, [repo], polling_strategy) }
+  let(:master){ Jbs::Master.new(jobs, polling_strategy) }
   
   describe "#run_jobs" do
     context "with jobs pending" do

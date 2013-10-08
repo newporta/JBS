@@ -1,4 +1,5 @@
 require "jbs/jobs"
+require "jbs/job"
 require_relative "../spec_helper"
 
 describe Jbs::Jobs do
@@ -14,6 +15,11 @@ describe Jbs::Jobs do
   describe "#add" do
     before { jobs.add(job) }
     its(:jobs) { should_not be_empty }
+  end
+
+  describe "#repos" do
+    before { jobs.add(job) }
+    its(:repos) { should_not be_empty }
   end
 
   context "with job" do
