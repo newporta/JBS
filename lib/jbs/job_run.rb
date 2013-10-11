@@ -11,17 +11,26 @@ module Jbs
     end
 
     def run
-      pipe = in_directory(job.repo.dirname) do
-        IO.popen(command)
-      end
-      output = pipe.read
-      Process.wait pipe.pid
+      Jbs::Log.info("Job #{job.repo.dirname}:#{job.branch} starting.")
 
-      job.update($?.exitstatus, output)
+      output = in_directory(job.repo.dirname) do
+       IO.popen(command) {|pipe| pipe.readlines.join }
+      end
+
+      status = $?.exitstatus
+
+      log_result(status, output)
+      job.update(status, output)
     end
 
     def command
-      "git checkout #{job.sha} && git reset head --hard && bundle exec rake #{job.task} 2>&1"
+      "git checkout #{job.sha} 2>&1 && git reset head --hard 2>&1 && bundle exec rake #{job.task} 2>&1"
+    end
+
+    private
+    def log_result(status, output)
+      Jbs::Log.info("JobRun for #{job.repo.dirname}:#{job.branch} #{status == 0 ? 'passed' : 'failed'}.")
+      Jbs::Log.info("Output: #{output}")
     end
   end
 end

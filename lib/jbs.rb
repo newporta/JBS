@@ -1,4 +1,5 @@
 require "jbs/version"
+require "jbs/log"
 require "jbs/master"
 require "jbs/repo"
 require "jbs/jobs"

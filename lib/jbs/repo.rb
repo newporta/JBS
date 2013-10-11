@@ -9,6 +9,7 @@ module Jbs
     end
 
     def poll
+      Jbs::Log.debug("Polling #{dirname}")
       in_directory(dirname) do
         `#{git_fetch_command}`
       end

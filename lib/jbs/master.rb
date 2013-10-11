@@ -11,7 +11,7 @@ class Jbs::Master
 
   def run
     while running? do
-      run_jobs || poll || sleep(20)
+      run_jobs || poll || wait
     end
   end
 
@@ -46,5 +46,9 @@ class Jbs::Master
 
   def update_jobs
     jobs.update
+  end
+
+  def wait
+    sleep(10)
   end
 end

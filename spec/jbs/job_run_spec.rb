@@ -12,7 +12,7 @@ describe Jbs::JobRun do
   end
 
   subject(:job_run) { job.new_run }
-  its(:command) { should eq("git checkout sha && git reset head --hard && bundle exec rake rake::task 2>&1") }
+  its(:command) { should eq("git checkout sha 2>&1 && git reset head --hard 2>&1 && bundle exec rake rake::task 2>&1") }
 
   describe "#run" do
     context "failing build" do
